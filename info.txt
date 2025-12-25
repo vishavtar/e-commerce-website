@@ -1,0 +1,18 @@
+function callApi(endpoint,data){
+
+    fetch(baseurl+endpoint,{
+        data
+    }).then((data)=>{
+        data
+    })
+
+}
+
+var config = {
+    method : "get",
+    Headers : {
+        ""
+    }
+}
+
+var response = callApi('login',config);
