@@ -20,7 +20,7 @@ function renderCategoriesList(value) {
 }
 
 function getCategoriesList() {
-  callApi("categories", "GET")
+  callApi("categories", "GET", null, true)
     .then((results) => {
       renderCategoriesList(results.data);
     })

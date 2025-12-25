@@ -49,7 +49,8 @@ formLogin.addEventListener("submit", (event) => {
 
 function logAPTDataSubmit() {
   prePostformLogin();
-  callApi("login", "POST", userLoginDetails)
+  const loginStringData = JSON.stringify(userLoginDetails);
+  callApi("login", "POST", loginStringData, false)
     .then((results) => {
       postformLoginData(results);
       if (results.status == "success") {
@@ -71,9 +72,6 @@ const validator = new JustValidate("#formLogin");
 
 validator
   .addField("#InputEmail", [
-    {
-      rule: "required",
-    },
     {
       rule: "required",
     },
@@ -207,8 +205,8 @@ function formRegisterSubmit() {
   userProfileDetails.phone_number = Inputphone.value;
   userProfileDetails.password = InputPassword1.value;
   userProfileDetails.password_confirmation = InputPassword2.value;
-
-  callApi("register", "POST", userProfileDetails, false)
+  const registerStringData = JSON.stringify(userProfileDetails);
+  callApi("register", "POST", registerStringData, false)
     .then((results) => {
       postformRegisterData(results);
       console.log(results.status);

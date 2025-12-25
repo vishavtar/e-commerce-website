@@ -26,7 +26,7 @@ const profile_details_common_error = document.getElementById(
 const save_Profile_details = document.getElementById("save_Profile_details");
 const edit_Profile_details = document.getElementById("edit_Profile_details");
 const contactForm = document.getElementById("contactForm");
-const formData = new FormData();
+
 const profileUpdateContentData = {
   name: "",
   email: "",
@@ -121,9 +121,6 @@ profileFormValidation
       rule: "required",
     },
     {
-      rule: "required",
-    },
-    {
       rule: "email",
     },
   ])
@@ -161,22 +158,7 @@ profileFormValidation
     },
   ])
   .onSuccess(() => {
-    console.log(profile_details_avatar.files[0]);
-
-    
-
-    formData.append("name", profile_details_name.value);
-    formData.append("email", profile_details_email.value);
-    formData.append("phone_number", profile_details_phoneNo.value);
-    formData.append("country", profile_details_country.value);
-    formData.append("city", profile_details_city.value);
-    formData.append("postal_code", profile_details_postal_code.value);
-    formData.append("address_1", profile_details_address_current.value);
-    formData.append("address_2", profile_details_address_permanent.value);
-    formData.append("avatar", profile_details_avatar.files[0]);
-    console.log(formData);
-    profileUpdateContent();
-    
+    const formData = profileUpdateContent();
     callApi("profile", "POST", formData, true)
       .then((results) => {
         profile_details_common_error.innerHTML = results.status;
@@ -198,17 +180,18 @@ profileFormValidation
   );
 
 function profileUpdateContent() {
-  console.log(profile_details_avatar[0]);
-  if (profile_details_avatar.value) {
-    profileUpdateContentData.avatar = profile_details_avatar.value;
-
+  console.log(profile_details_avatar.files[0]);
+  const formData = new FormData();
+  formData.append("name", profile_details_name.value);
+  formData.append("email", profile_details_email.value);
+  formData.append("phone_number", profile_details_phoneNo.value);
+  formData.append("country", profile_details_country.value);
+  formData.append("city", profile_details_city.value);
+  formData.append("postal_code", profile_details_postal_code.value);
+  formData.append("address_1", profile_details_address_current.value);
+  formData.append("address_2", profile_details_address_permanent.value);
+  if (profile_details_avatar.files && profile_details_avatar.files[0]) {
+    formData.append("avatar", profile_details_avatar.files[0]);
   }
-  profileUpdateContentData.name = profile_details_name.value;
-  profileUpdateContentData.email = profile_details_email.value;
-  profileUpdateContentData.phone_number = profile_details_phoneNo.value;
-  profileUpdateContentData.country = profile_details_country.value;
-  profileUpdateContentData.city = profile_details_city.value;
-  profileUpdateContentData.postal_code = profile_details_postal_code.value;
-  profileUpdateContentData.address_1 = profile_details_address_current.value;
-  profileUpdateContentData.address_2 = profile_details_address_permanent.value;
+  return formData;
 }

@@ -45,7 +45,7 @@ function shop_categories_nav(value) {
 }
 
 function getCategories_shop() {
-  callApi("categories", "GET", null, false)
+  callApi("categories", "GET", null, true)
     .then((result) => {
       shop_categories_nav(result.data);
     })

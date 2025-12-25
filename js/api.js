@@ -3,8 +3,7 @@ let baseURL = "https://www.iamtiksha.com/apis/store/public/api/v1/";
 let accesstokencheck = localStorage.getItem("token");
 
 function setAuthToken(value) {
-  localStorage.removeItem("token");
-  localStorage.setItem("token", btoa(value));
+  localStorage.setItem("token", value);
 }
 
 function getAuthToken() {
@@ -12,11 +11,10 @@ function getAuthToken() {
     return false;
   }
   const token = localStorage.getItem("token");
-  return atob(token);
+  return token;
 }
 function accessTokenValidation(response) {
   if (response.status === 401 || response.status === 403) {
-    alert("401");
     localStorage.removeItem("token");
     window.location.href = "login.html";
   }
@@ -43,20 +41,22 @@ function getUserDetailsLocale() {
 // }
 
 function callApi(endPoint, method = "GET", body = null, accessToken = false) {
-  const headers = {
-    // "Content-Type": "application/json",
-  };
+  const headers = {};
   if (accessToken) {
     headers.Authorization = `Bearer ${getAuthToken()}`;
   }
+
+  if (typeof body === "string") {
+    headers["Content-Type"] = "application/json";
+  }
+
   const dataPoints = {
     method,
     headers,
   };
-  if (body) {
-    console.log(typeof body);
-    dataPoints.body = JSON.stringify(body);
-  }
+
+  if (body) dataPoints.body = body;
+
   return fetch(baseURL + endPoint, dataPoints).then((response) => {
     console.log(response);
     accessTokenValidation(response);

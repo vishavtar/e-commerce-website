@@ -1,7 +1,7 @@
 const categoriesContainer = document.getElementById("categoriesContainer");
 let categories;
 function categoriesList() {
-  callApi("categories", "GET", null, false)
+  callApi("categories", "GET", null, true)
     .then((result) => {
       categoriesItems(result.data);
     })
