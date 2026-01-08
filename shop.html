@@ -76,7 +76,7 @@
             </div>
             <div class="our-link">
               <ul>
-                <li><a href="#" id="myAccountLinkCTA">My Account</a></li>
+                <li id="myAccountLinkCTA"></li>
                 <li><a href="#">Our location</a></li>
               </ul>
             </div>
@@ -126,64 +126,15 @@
                 <a class="nav-link" href="about.html">About Us</a>
               </li>
               <li class="dropdown active megamenu-fw">
-                <a
-                  href="#"
+                 <a
+                  href="shop.html"
                   class="nav-link dropdown-toggle arrow"
                   data-toggle="dropdown"
                   >Product</a
                 >
-                <ul class="dropdown-menu megamenu-content" role="menu">
+                <ul class="dropdown-menu megamenu-content"  role="menu">
                   <li>
-                    <div class="row">
-                      <div class="col-menu col-md-3">
-                        <h6 class="title">Top</h6>
-                        <div class="content">
-                          <ul class="menu-col">
-                            <li><a href="shop.html">Jackets</a></li>
-                            <li><a href="shop.html">Shirts</a></li>
-                            <li>
-                              <a href="shop.html">Sweaters & Cardigans</a>
-                            </li>
-                            <li><a href="shop.html">T-shirts</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                      <!-- end col-3 -->
-                      <div class="col-menu col-md-3">
-                        <h6 class="title">Bottom</h6>
-                        <div class="content">
-                          <ul class="menu-col">
-                            <li><a href="shop.html">Swimwear</a></li>
-                            <li><a href="shop.html">Skirts</a></li>
-                            <li><a href="shop.html">Jeans</a></li>
-                            <li><a href="shop.html">Trousers</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                      <!-- end col-3 -->
-                      <div class="col-menu col-md-3">
-                        <h6 class="title">Clothing</h6>
-                        <div class="content">
-                          <ul class="menu-col">
-                            <li><a href="shop.html">Top Wear</a></li>
-                            <li><a href="shop.html">Party wear</a></li>
-                            <li><a href="shop.html">Bottom Wear</a></li>
-                            <li><a href="shop.html">Indian Wear</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="col-menu col-md-3">
-                        <h6 class="title">Accessories</h6>
-                        <div class="content">
-                          <ul class="menu-col">
-                            <li><a href="shop.html">Bags</a></li>
-                            <li><a href="shop.html">Sunglasses</a></li>
-                            <li><a href="shop.html">Fragrances</a></li>
-                            <li><a href="shop.html">Wallets</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                      <!-- end col-3 -->
+                    <div class="row" id="productDropDown">
                     </div>
                     <!-- end row -->
                   </li>
@@ -273,7 +224,7 @@
       <div class="container">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-search"></i></span>
-          <input type="text" class="form-control" placeholder="Search" />
+          <input type="text" class="form-control" id="topProductSearch" placeholder="Search" />
           <span class="input-group-addon close-search"
             ><i class="fa fa-times"></i
           ></span>
@@ -305,14 +256,13 @@
           <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
             <div class="product-categori">
               <div class="search-product">
-                <form action="#">
                   <input
                     class="form-control"
                     placeholder="Search here..."
                     type="text"
+                    id="searchPrducts" 
                   />
-                  <button type="submit"><i class="fa fa-search"></i></button>
-                </form>
+                  <button id="searchPrductsCTA" type="submit"><i class="fa fa-search"></i></button>
               </div>
               <div class="filter-sidebar-left">
                 <div class="title-left">
@@ -565,15 +515,15 @@
                   <div class="toolbar-sorter-right">
                     <span>Sort by </span>
                     <select
-                      id="basic"
+                      id="proSortOption"
                       class="selectpicker show-tick form-control"
                       data-placeholder="$ USD"
                     >
                       <option data-display="Select">Nothing</option>
-                      <option value="1">Popularity</option>
-                      <option value="2">High Price → High Price</option>
-                      <option value="3">Low Price → High Price</option>
-                      <option value="4">Best Selling</option>
+                      <option value="popularity">Popularity</option>
+                      <option value="high_to_low">High Price → Low Price</option>
+                      <option value="low_to_high">Low Price → High Price</option>
+                      <option value="best_selling">Best Selling</option>
                     </select>
                   </div>
                   <p>Showing all 4 results</p>
@@ -587,58 +537,11 @@
                     class="tab-pane fade show active"
                     id="grid-view"
                   >
-                    <div class="row">
-                      <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-                        <div class="products-single fix">
-                          <div class="box-img-hover">
-                            <div class="type-lb">
-                              <p class="sale">Sale</p>
-                            </div>
-                            <img
-                              src="images/img-pro-01.jpg"
-                              class="img-fluid"
-                              alt="Image"
-                            />
-                            <div class="mask-icon">
-                              <ul>
-                                <li>
-                                  <a
-                                    href="#"
-                                    data-toggle="tooltip"
-                                    data-placement="right"
-                                    title="View"
-                                    ><i class="fas fa-eye"></i
-                                  ></a>
-                                </li>
-                                <li>
-                                  <a
-                                    href="#"
-                                    data-toggle="tooltip"
-                                    data-placement="right"
-                                    title="Compare"
-                                    ><i class="fas fa-sync-alt"></i
-                                  ></a>
-                                </li>
-                                <li>
-                                  <a
-                                    href="#"
-                                    data-toggle="tooltip"
-                                    data-placement="right"
-                                    title="Add to Wishlist"
-                                    ><i class="far fa-heart"></i
-                                  ></a>
-                                </li>
-                              </ul>
-                              <a class="cart" href="#">Add to Cart</a>
-                            </div>
-                          </div>
-                          <div class="why-text">
-                            <h4>Lorem ipsum dolor sit amet</h4>
-                            <h5>$9.79</h5>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="row" id="showALlProducts">
                     </div>
+                    
+                    <div class="owl-nav" id="allProductsPagination"></div>
+                    
                   </div>
                 </div>
               </div>

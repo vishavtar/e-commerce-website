@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommerce Admin Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { 
+            color: white; 
+            text-align: center; 
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .box {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .box h2 { 
+            color: #333; 
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        input, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        select {
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            background: white;
+            cursor: pointer;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        button {
+            padding: 12px 24px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            border: none; 
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0;
+        }
+        .btn-edit {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0 5px 0 0;
+        }
+        .item { 
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .item-content {
+            flex: 1;
+        }
+        .item-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .item img {
+            border-radius: 6px;
+            object-fit: cover;
+        }
+        .token-display {
+            background: #f0f9ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            color: #0369a1;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status.success { background: #d1fae5; color: #065f46; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .item { flex-direction: column; align-items: flex-start; }
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .notification.success { border-left: 4px solid #10b981; }
+        .notification.error { border-left: 4px solid #ef4444; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛍️ Ecommerce Admin Panel</h1>
+
+    <!-- LOGIN -->
+    <div class="box">
+        <h2>🔐 Login</h2>
+        <div class="input-group">
+            <label for="login_email">Email Address</label>
+            <input id="login_email" type="email" placeholder="admin@example.com" value="">
+        </div>
+        <div class="input-group">
+            <label for="login_password">Password</label>
+            <input id="login_password" type="password" placeholder="••••••••">
+        </div>
+        <button onclick="login()" id="loginBtn">Login</button>
+        
+        <div id="tokenContainer" style="display:none;">
+            <label style="margin-top: 15px;">Access Token:</label>
+            <div class="token-display" id="tokenDisplay"></div>
+        </div>
+    </div>
+
+    <!-- CATEGORY CRUD -->
+    <div class="box" id="categorySection" style="display:none;">
+        <h2>📁 Categories</h2>
+        <div class="input-group">
+            <label for="cat_name">Category Name</label>
+            <input id="cat_name" placeholder="e.g., Electronics, Clothing">
+        </div>
+        <input type="hidden" id="cat_edit_id">
+        <button onclick="saveCategory()">Create Category</button>
+        <button onclick="clearCategoryForm()" style="background: #6b7280;">Clear</button>
+        
+        <div id="categoryList" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- SUBCATEGORY CRUD -->
+    <div class="box" id="subcategorySection" style="display:none;">
+        <h2>📂 Subcategories</h2>
+        <div class="input-group">
+            <label for="sub_name">Subcategory Name</label>
+            <input id="sub_name" placeholder="e.g., Smartphones, T-Shirts">
+        </div>
+        <div class="input-group">
+            <label for="sub_cat_id">Parent Category</label>
+            <select id="sub_cat_id">
+                <option value="">Select a category</option>
+            </select>
+        </div>
+        <input type="hidden" id="sub_edit_id">
+        <button onclick="saveSubCategory()">Create Subcategory</button>
+        <button onclick="clearSubCategoryForm()" style="background: #6b7280;">Clear</button>
+        
+        <div id="subCategoryList" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- PRODUCT CRUD -->
+    <div class="box" id="productSection" style="display:none;">
+        <h2>📦 Products</h2>
+        <div class="input-group">
+            <label for="p_name">Product Name</label>
+            <input id="p_name" placeholder="e.g., iPhone 15 Pro">
+        </div>
+        <div class="input-group">
+            <label for="p_desc">Description</label>
+            <textarea id="p_desc" placeholder="Product description..."></textarea>
+        </div>
+        <div class="grid-2">
+            <div class="input-group">
+                <label for="p_price">Regular Price</label>
+                <input id="p_price" type="number" placeholder="999.99">
+            </div>
+            <div class="input-group">
+                <label for="p_sale">Sale Price (Optional)</label>
+                <input id="p_sale" type="number" placeholder="799.99">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="p_cat">Category *</label>
+            <select id="p_cat">
+                <option value="">Select a category</option>
+            </select>
+        </div>
+        <div class="input-group" id="subcategoryContainer" style="display: none;">
+            <label for="p_subcat">
+                Subcategory 
+                <span style="color:#999;font-weight:normal;font-size:12px;">(Optional)</span>
+            </label>
+            <select id="p_subcat">
+                <option value="">No subcategory</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="p_image">Product Image URL</label>
+            <input id="p_image" placeholder="https://example.com/image.jpg">
+        </div>
+        <input type="hidden" id="p_edit_id">
+        <button onclick="saveProduct()">Create Product</button>
+        <button onclick="clearProductForm()" style="background: #6b7280;">Clear</button>
+        
+        <div id="productList" style="margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+const BASE_URL = "https://www.iamtiksha.com/apis/store/public/api/v1";
+let TOKEN = "";
+let categoriesData = [];
+let subCategoriesData = [];
+
+// Utility Functions
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function showLoading(buttonId) {
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> Loading...';
+    }
+}
+
+function hideLoading(buttonId, text) {
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = text;
+    }
+}
+
+async function apiCall(url, options = {}) {
+    try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'API request failed');
+        }
+        
+        return data;
+    } catch (error) {
+        showNotification(error.message, 'error');
+        throw error;
+    }
+}
+
+// LOGIN
+async function login() {
+    const email = document.getElementById("login_email").value.trim();
+    const password = document.getElementById("login_password").value;
+
+    if (!email || !password) {
+        showNotification('Please enter email and password', 'error');
+        return;
+    }
+
+    showLoading('loginBtn');
+
+    try {
+        const data = await apiCall(`${BASE_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        TOKEN = data.access_token;
+        document.getElementById("tokenDisplay").textContent = TOKEN;
+        document.getElementById("tokenContainer").style.display = "block";
+        
+        // Show admin sections
+        document.getElementById("categorySection").style.display = "block";
+        document.getElementById("subcategorySection").style.display = "block";
+        document.getElementById("productSection").style.display = "block";
+
+        showNotification('Login successful!');
+        
+        // Load all data
+        loadCategories();
+        loadSubCategories();
+        loadProducts();
+    } catch (error) {
+        console.error('Login error:', error);
+    } finally {
+        hideLoading('loginBtn', 'Login');
+    }
+}
+
+// CATEGORIES
+async function saveCategory() {
+    const name = document.getElementById("cat_name").value.trim();
+    const editId = document.getElementById("cat_edit_id").value;
+
+    if (!name) {
+        showNotification('Please enter category name', 'error');
+        return;
+    }
+
+    try {
+        const url = editId 
+            ? `${BASE_URL}/admin/categories/${editId}`
+            : `${BASE_URL}/admin/categories`;
+        
+        await apiCall(url, {
+            method: editId ? "PUT" : "POST",
+            headers: {
+                "Authorization": `Bearer ${TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+            })
+        });
+
+        showNotification(editId ? 'Category updated!' : 'Category created!');
+        clearCategoryForm();
+        loadCategories();
+    } catch (error) {
+        console.error('Save category error:', error);
+    }
+}
+
+async function loadCategories() {
+    try {
+        const data = await apiCall(`${BASE_URL}/categories`);
+        const list = document.getElementById("categoryList");
+
+        categoriesData = data.data || [];
+
+        if (categoriesData.length === 0) {
+            list.innerHTML = '<div class="empty-state">No categories yet. Create your first one!</div>';
+            return;
+        }
+
+        // Update category dropdown for subcategories
+        updateCategoryDropdown();
+        // Update category dropdown for products
+        updateProductCategoryDropdown();
+
+        let html = "";
+        categoriesData.forEach(cat => {
+            html += `
+                <div class="item">
+                    <div class="item-content">
+                        <strong>${cat.name}</strong> <span style="color:#999;">(ID: ${cat.id})</span>
+                        <br>
+                        <small style="color:#666;">
+                            ${cat.sub_categories_count} subcategories · ${cat.products_count} products
+                        </small>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-edit" onclick="editCategory(${cat.id}, '${cat.name.replace(/'/g, "\\'")}')">Edit</button>
+                        <button class="btn-delete" onclick="deleteCategory(${cat.id})">Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        list.innerHTML = html;
+    } catch (error) {
+        console.error('Load categories error:', error);
+    }
+}
+
+function updateCategoryDropdown() {
+    const select = document.getElementById("sub_cat_id");
+    select.innerHTML = '<option value="">Select a category</option>';
+    
+    categoriesData.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.id;
+        option.textContent = cat.name;
+        select.appendChild(option);
+    });
+}
+
+function updateProductCategoryDropdown() {
+    const select = document.getElementById("p_cat");
+    select.innerHTML = '<option value="">Select a category</option>';
+    
+    categoriesData.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.id;
+        option.textContent = cat.name;
+        select.appendChild(option);
+    });
+}
+
+function editCategory(id, name) {
+    document.getElementById("cat_name").value = name;
+    document.getElementById("cat_edit_id").value = id;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function clearCategoryForm() {
+    document.getElementById("cat_name").value = "";
+    document.getElementById("cat_edit_id").value = "";
+}
+
+async function deleteCategory(id) {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+
+    try {
+        await apiCall(`${BASE_URL}/admin/categories/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${TOKEN}` }
+        });
+
+        showNotification('Category deleted!');
+        loadCategories();
+    } catch (error) {
+        console.error('Delete category error:', error);
+    }
+}
+
+// SUBCATEGORIES
+async function saveSubCategory() {
+    const name = document.getElementById("sub_name").value.trim();
+    const category_id = document.getElementById("sub_cat_id").value;
+    const editId = document.getElementById("sub_edit_id").value;
+
+    if (!name || !category_id) {
+        showNotification('Please enter subcategory name and category ID', 'error');
+        return;
+    }
+
+    try {
+        const url = editId 
+            ? `${BASE_URL}/admin/sub-categories/${editId}`
+            : `${BASE_URL}/admin/sub-categories`;
+
+        await apiCall(url, {
+            method: editId ? "PUT" : "POST",
+            headers: {
+                "Authorization": `Bearer ${TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                category_id
+            })
+        });
+
+        showNotification(editId ? 'Subcategory updated!' : 'Subcategory created!');
+        clearSubCategoryForm();
+        loadSubCategories();
+    } catch (error) {
+        console.error('Save subcategory error:', error);
+    }
+}
+
+async function loadSubCategories() {
+    try {
+        const data = await apiCall(`${BASE_URL}/sub-categories`);
+        const list = document.getElementById("subCategoryList");
+
+        subCategoriesData = data.data || [];
+
+        if (subCategoriesData.length === 0) {
+            list.innerHTML = '<div class="empty-state">No subcategories yet.</div>';
+            return;
+        }
+
+        let html = "";
+        subCategoriesData.forEach(sub => {
+            const categoryName = categoriesData.find(c => c.id === sub.category_id)?.name || 'Unknown';
+            html += `
+                <div class="item">
+                    <div class="item-content">
+                        <strong>${sub.name}</strong> <span style="color:#999;">(ID: ${sub.id})</span>
+                        <br>
+                        <small style="color:#666;">Category: ${categoryName}</small>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-edit" onclick="editSubCategory(${sub.id}, '${sub.name.replace(/'/g, "\\'")}', ${sub.category_id})">Edit</button>
+                        <button class="btn-delete" onclick="deleteSubCategory(${sub.id})">Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        list.innerHTML = html;
+    } catch (error) {
+        console.error('Load subcategories error:', error);
+    }
+}
+
+// NEW FUNCTION: Load subcategories for product form based on selected category
+function loadSubCategoriesForProduct(categoryId) {
+    const subcategorySelect = document.getElementById("p_subcat");
+    const subcategoryContainer = document.getElementById("subcategoryContainer");
+    
+    // Clear current options except the first one
+    subcategorySelect.innerHTML = '<option value="">No subcategory</option>';
+    
+    // Hide container if no category selected
+    if (!categoryId) {
+        subcategoryContainer.style.display = 'none';
+        return;
+    }
+    
+    // Filter subcategories for the selected category
+    const filteredSubs = subCategoriesData.filter(sub => sub.category_id == categoryId);
+    
+    // If no subcategories exist for this category, hide the dropdown
+    if (filteredSubs.length === 0) {
+        subcategoryContainer.style.display = 'none';
+        return;
+    }
+    
+    // Show the container and populate options
+    subcategoryContainer.style.display = 'block';
+    
+    // Add subcategory options
+    filteredSubs.forEach(sub => {
+        const option = document.createElement('option');
+        option.value = sub.id;
+        option.textContent = sub.name;
+        subcategorySelect.appendChild(option);
+    });
+}
+
+function editSubCategory(id, name, categoryId) {
+    document.getElementById("sub_name").value = name;
+    document.getElementById("sub_cat_id").value = categoryId;
+    document.getElementById("sub_edit_id").value = id;
+    window.scrollTo({ top: document.getElementById("subcategorySection").offsetTop - 20, behavior: 'smooth' });
+}
+
+function clearSubCategoryForm() {
+    document.getElementById("sub_name").value = "";
+    document.getElementById("sub_cat_id").value = "";
+    document.getElementById("sub_edit_id").value = "";
+}
+
+async function deleteSubCategory(id) {
+    if (!confirm('Are you sure you want to delete this subcategory?')) return;
+
+    try {
+        await apiCall(`${BASE_URL}/admin/sub-categories/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${TOKEN}` }
+        });
+
+        showNotification('Subcategory deleted!');
+        loadSubCategories();
+    } catch (error) {
+        console.error('Delete subcategory error:', error);
+    }
+}
+
+// PRODUCTS
+async function saveProduct() {
+    const name = document.getElementById("p_name").value.trim();
+    const desc = document.getElementById("p_desc").value.trim();
+    const price = document.getElementById("p_price").value;
+    const sale = document.getElementById("p_sale").value;
+    const cat = document.getElementById("p_cat").value;
+    const sub = document.getElementById("p_subcat").value; // Get subcategory value
+    const image = document.getElementById("p_image").value.trim();
+    const editId = document.getElementById("p_edit_id").value;
+
+    if (!name || !price || !cat) {
+        showNotification('Please fill in product name, price, and category', 'error');
+        return;
+    }
+
+    try {
+        const url = editId 
+            ? `${BASE_URL}/admin/products/${editId}`
+            : `${BASE_URL}/admin/products`;
+
+        // Prepare product data with subcategory
+        const productData = {
+            name,
+            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            description: desc,
+            regular_price: price,
+            sale_price: sale || null,
+            category_id: cat,
+            subcategory_id: sub || null, // Add subcategory ID (null if empty)
+            status: true,
+            stock: 100,
+            images: image ? [image] : []
+        };
+
+        console.log('Sending product data:', productData); // For debugging
+
+        await apiCall(url, {
+            method: editId ? "PUT" : "POST",
+            headers: {
+                "Authorization": `Bearer ${TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productData)
+        });
+
+        showNotification(editId ? 'Product updated!' : 'Product created!');
+        clearProductForm();
+        loadProducts();
+    } catch (error) {
+        console.error('Save product error:', error);
+    }
+}
+
+async function loadProducts() {
+    try {
+        const data = await apiCall(`${BASE_URL}/products`);
+        const list = document.getElementById("productList");
+
+        if (!data.data || data.data.length === 0) {
+            list.innerHTML = '<div class="empty-state">No products yet.</div>';
+            return;
+        }
+
+        let html = "";
+        data.data.forEach(p => {
+            const price = p.sale_price || p.regular_price;
+            const hasImage = p.images && p.images[0];
+            const categoryName = categoriesData.find(c => c.id === p.category_id)?.name || 'Unknown';
+            const subcategoryName = subCategoriesData.find(s => s.id === p.subcategory_id)?.name || null;
+            
+            html += `
+                <div class="item">
+                    ${hasImage ? `<img src="${p.images[0]}" width="80" height="80" alt="${p.name}">` : ''}
+                    <div class="item-content">
+                        <strong>${p.name}</strong> <span style="color:#999;">(ID: ${p.id})</span>
+                        <br>
+                        <span style="color:#10b981;font-weight:600;">₹${price}</span>
+                        ${p.sale_price ? `<small style="text-decoration:line-through;color:#999;margin-left:8px;">₹${p.regular_price}</small>` : ''}
+                        <div style="font-size: 12px; color: #666; margin-top: 3px;">
+                            Category: ${categoryName}
+                            ${subcategoryName ? ` | Subcategory: ${subcategoryName}` : ''}
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-edit" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'>Edit</button>
+                        <button class="btn-delete" onclick="deleteProduct(${p.id})">Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        list.innerHTML = html;
+    } catch (error) {
+        console.error('Load products error:', error);
+    }
+}
+
+function editProduct(product) {
+    document.getElementById("p_name").value = product.name;
+    document.getElementById("p_desc").value = product.description || '';
+    document.getElementById("p_price").value = product.regular_price;
+    document.getElementById("p_sale").value = product.sale_price || '';
+    document.getElementById("p_cat").value = product.category_id;
+    document.getElementById("p_image").value = product.images && product.images[0] ? product.images[0] : '';
+    document.getElementById("p_edit_id").value = product.id;
+    
+    // Load subcategories for the selected category
+    loadSubCategoriesForProduct(product.category_id);
+    
+    // Set subcategory after a short delay (to allow dropdown to populate)
+    setTimeout(() => {
+        if (product.subcategory_id) {
+            document.getElementById("p_subcat").value = product.subcategory_id;
+        } else {
+            document.getElementById("p_subcat").value = '';
+        }
+    }, 100);
+    
+    window.scrollTo({ top: document.getElementById("productSection").offsetTop - 20, behavior: 'smooth' });
+}
+
+function clearProductForm() {
+    document.getElementById("p_name").value = "";
+    document.getElementById("p_desc").value = "";
+    document.getElementById("p_price").value = "";
+    document.getElementById("p_sale").value = "";
+    document.getElementById("p_cat").value = "";
+    document.getElementById("p_subcat").value = "";
+    document.getElementById("p_image").value = "";
+    document.getElementById("p_edit_id").value = "";
+    document.getElementById("subcategoryContainer").style.display = "none";
+}
+
+async function deleteProduct(id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    try {
+        await apiCall(`${BASE_URL}/admin/products/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${TOKEN}` }
+        });
+
+        showNotification('Product deleted!');
+        loadProducts();
+    } catch (error) {
+        console.error('Delete product error:', error);
+    }
+}
+ document.getElementById("p_cat").addEventListener("change",()=>{
+    loadSubCategoriesForProduct(p_cat.value);
+    console.log(p_cat.value)
+ })
+</script>
+
+</body>
+</html>
