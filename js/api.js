@@ -17,6 +17,10 @@ function accessTokenValidation(response) {
   if (response.status === 401 || response.status === 403) {
     localStorage.removeItem("token");
     window.location.href = "login.html";
+    return true
+  }
+  else{
+    return false
   }
 }
 function setUserDetailsLocale(value) {
@@ -24,6 +28,7 @@ function setUserDetailsLocale(value) {
   const profileDetailsSet = JSON.stringify(value);
 
   localStorage.setItem("userDetails", btoa(profileDetailsSet));
+  console.log("aet local values",value);
 }
 function getUserDetailsLocale() {
   if (localStorage.getItem("userDetails")) {
@@ -46,7 +51,8 @@ function callApi(endPoint, method = "GET", body = null, accessToken = false) {
     headers.Authorization = `Bearer ${getAuthToken()}`;
   }
 
-  if (typeof body === "string") {
+  if (typeof body === "string" ) {
+    console.log("form type",typeof body)
     headers["Content-Type"] = "application/json";
   }
 
@@ -58,7 +64,7 @@ function callApi(endPoint, method = "GET", body = null, accessToken = false) {
   if (body) dataPoints.body = body;
 
   return fetch(baseURL + endPoint, dataPoints).then((response) => {
-    console.log(response);
+    // console.log(response);
     accessTokenValidation(response);
     return response.json();
   });

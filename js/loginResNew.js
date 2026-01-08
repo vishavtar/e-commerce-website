@@ -55,7 +55,7 @@ function logAPTDataSubmit() {
       postformLoginData(results);
       if (results.status == "success") {
         setAuthToken(results.access_token);
-        // history.back();
+        console.log(results.access_token);
         console.log("CP", currentpage);
         if (currentpage && currentpage != null) {
           window.location.href = currentpage;

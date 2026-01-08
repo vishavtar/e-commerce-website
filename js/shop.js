@@ -1,4 +1,5 @@
 const categoriesContainer = document.getElementById("categoriesContainer");
+const currentUrl = window.location.href;
 let categories;
 function categoriesList() {
   callApi("categories", "GET", null, true)
@@ -62,3 +63,6 @@ function categoriesList() {
   }
 }
 categoriesList();
+
+
+console.log("currentUrl");
